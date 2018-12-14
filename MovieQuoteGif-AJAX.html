@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Quoth the Giphy</title>
+</head>
+
+<body>
+  <button data-person="Arnold Schwarzenegger">I'll be back</button>
+  <button data-person="Michael J Fox">
+    My happiness grows in direct proportionto my acceptance,
+    and in inverse proportion to my expectations.
+  </button>
+
+  <button data-person="Lucille Ball">
+    Love yourself first and everything else falls into line.
+  </button>
+  <button data-person="Jack Burton">
+    Honey, I never drive faster than I can see. Besides that, it's all in the reflexes.
+  </button>
+  <button data-person="Samuel Jackson">
+    Far better is it to dare mighty things, to win glorious triumphs,
+    even though checkered by failure... than to rank with those poor spirits who
+    neither enjoy nor suffer much, because they live in a gray twilight that
+    knows not victory nor defeat.
+  </button>
+
+  <div id="gifs-appear-here">
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+   
+    $("button").on("click", function() {
+     
+      const person = $(this).attr("data-person");
+
+    
+      const queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        person + "&api_key=dc6zaTOxFJmzC&limit=10";
+
+    
+      $.ajax({
+          url: queryURL,
+          method: "GET"
+        })
+        
+        .done(function(response) {
+         
+          const results = response.data;
+
+          // Looping over every result item
+          for (let i = 0; i < results.length; i++) {
+
+            // Only taking action if the photo has an appropriate rating
+            if (results[i].rating !== "r" && results[i].rating !== "pg-13") {
+              // Creating a div with the class "item"
+              const gifDiv = $("<div class='item'>");
+
+              // Storing the result item's rating
+              const rating = results[i].rating;
+
+              // Creating a paragraph tag with the result item's rating
+              const p = $("<p>").text("Rating: " + rating);
+
+              // Creating an image tag
+              const personImage = $("<img>");
+
+              // Giving the image tag an src attribute of a proprty pulled off the
+              // result item
+              personImage.attr("src", results[i].images.fixed_height.url);
+
+              // Appending the paragraph and personImage we created to the "gifDiv" div we created
+              gifDiv.append(p);
+              gifDiv.append(personImage);
+
+             
+              $("#gifs-appear-here").prepend(gifDiv);
+            }
+          }
+        });
+    });
+  </script>
+</body>
+
+</html>
